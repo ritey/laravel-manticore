@@ -87,3 +87,22 @@ In the response from Manticore, you’ll find:
     ]
 ]
 ```
+
+
+---
+
+## ✨ Highlighting & Facets Example
+
+```php
+$results = Post::search('climate')
+    ->tap(function ($builder) {
+        $builder->facets = ['metadata.topic'];
+    })
+    ->get();
+
+foreach ($results as $result) {
+    echo $result->highlight['title'][0] ?? '';
+}
+
+$facets = $results->raw()['aggregations'] ?? [];
+```

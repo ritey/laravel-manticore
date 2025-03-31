@@ -49,7 +49,7 @@ class ManticoreEngine extends Engine
     {
         $index = $builder->model->searchableAs();
         $vector = $builder->vector ?? null;
-        $similarity = $builder->similarity ?? 'dotproduct';
+        $similarity = $builder->similarity ?: config('manticore.similarity', 'dotproduct');
         $filterBuilder = $builder->filterBuilder ?? null;
         $sort = $builder->sort ?? null;
         $boosts = $builder->boosts ?? [];
@@ -97,6 +97,18 @@ class ManticoreEngine extends Engine
         $queryBody['query'] = $query;
         $queryBody['size'] = $size;
         $queryBody['from'] = $from;
+        
+        if (!empty($builder->facets)) {
+            $queryBody['aggs'] = [];
+            foreach ($builder->facets as $facetField) {
+                $queryBody['aggs'][$facetField] = ['terms' => ['field' => $facetField]];
+            }
+        }
+    
+        $queryBody['highlight'] = [
+            'fields' => ['*' => new \stdClass()]
+        ];
+    
 
         if ($sort && is_array($sort)) {
             $queryBody['sort'] = $sort;

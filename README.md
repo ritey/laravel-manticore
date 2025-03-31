@@ -119,3 +119,26 @@ $builder->facets = ['type', 'metadata.topic'];
 ```
 
 This will return doc counts for each unique value in those fields.
+
+
+---
+
+## ✨ Highlighting Support
+
+Search results can return highlighted text fragments:
+
+```php
+$result->highlight['title'] ?? []
+```
+
+---
+
+## 🧩 Faceting Support
+
+Enable facets for sidebar filters or aggregations:
+
+```php
+$builder->facets = ['type', 'metadata.topic'];
+```
+
+Results will include `aggs` with counts for each unique value.
