@@ -1,0 +1,41 @@
+{
+    "name": "ritey/laravel-manticore",
+    "description": "Laravel Scout driver for Manticore Search with support for vector search, hybrid queries, and JSON filters.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "David Wright",
+            "email": "dave@ritey.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "laravel/scout": "^10.0",
+        "manticoresearch/manticoresearch-php": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ritey\\LaravelManticore\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Ritey\\LaravelManticore\\ManticoreServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "keywords": [
+        "laravel",
+        "scout",
+        "manticore",
+        "search",
+        "vector",
+        "json",
+        "ai",
+        "nlp"
+    ]
+}

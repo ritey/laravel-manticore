@@ -1,0 +1,40 @@
+# Laravel / PHP related
+/vendor
+/.env
+/.env.*
+/.env.php
+/.phpunit.result.cache
+/storage/*.key
+/storage/*.log
+/storage/framework/*
+/storage/logs/*
+/bootstrap/cache/*
+/node_modules
+
+# IDEs and editors
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Composer
+composer.lock
+
+# PHPUnit
+phpunit.xml
+phpunit.xml.dist
+coverage/
+tests/_output/
+
+# Logs and temp files
+*.log
+*.cache
+*.tmp
+*.bak
+
+# GitHub workflows (optional override)
+/.github/*.bak
