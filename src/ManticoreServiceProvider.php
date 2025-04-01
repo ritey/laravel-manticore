@@ -7,6 +7,7 @@
 
 namespace Ritey\LaravelManticore;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Scout\EngineManager;
 use Manticoresearch\Client;
