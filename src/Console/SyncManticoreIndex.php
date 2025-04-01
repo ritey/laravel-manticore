@@ -1,9 +1,9 @@
 <?php
-
 /**
  * Laravel Manticore Scout
- * (c) Ritey, MIT License.
+ * (c) Ritey, MIT License
  */
+
 
 namespace Ritey\LaravelManticore\Console;
 
@@ -20,22 +20,19 @@ class SyncManticoreIndex extends Command
         $modelClass = $this->argument('model');
         if (!class_exists($modelClass)) {
             $this->error("Model {$modelClass} does not exist.");
-
             return;
         }
 
-        $model = new $modelClass();
+        $model = new $modelClass;
         if (!method_exists($model, 'toSearchableArray')) {
-            $this->error('Model does not implement toSearchableArray().');
-
+            $this->error("Model does not implement toSearchableArray().");
             return;
         }
 
         $index = $model->searchableAs();
         $fields = $model->toSearchableArray();
         if (!is_array($fields) || empty($fields)) {
-            $this->error('toSearchableArray() returned no fields.');
-
+            $this->error("toSearchableArray() returned no fields.");
             return;
         }
 
@@ -50,7 +47,7 @@ class SyncManticoreIndex extends Command
                 }
 
                 if (is_array($value) && isset($value[0]) && is_float($value[0])) {
-                    $sql = "ALTER TABLE {$index} ADD COLUMN {$key} VECTOR(".count($value).') TYPE FLOAT';
+                    $sql = "ALTER TABLE {$index} ADD COLUMN {$key} VECTOR(" . count($value) . ") TYPE FLOAT";
                 } elseif (is_numeric($value)) {
                     $sql = "ALTER TABLE {$index} ADD COLUMN {$key} FLOAT";
                 } elseif (is_string($value)) {
@@ -65,7 +62,7 @@ class SyncManticoreIndex extends Command
 
             $this->info("Index {$index} synced successfully.");
         } catch (\Throwable $e) {
-            $this->error('Failed to sync: '.$e->getMessage());
+            $this->error("Failed to sync: " . $e->getMessage());
         }
     }
 }

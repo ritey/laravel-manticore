@@ -37,4 +37,6 @@ return [
     */
 
     'import_chunk_size' => env('MANTICORE_IMPORT_CHUNK_SIZE', 500),
+
+    'debug' => env('MANTICORE_DEBUG', false),
 ];

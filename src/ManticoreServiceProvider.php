@@ -22,17 +22,28 @@ class ManticoreServiceProvider extends ServiceProvider
 
         // Bind Manticore Client singleton with graceful fallback
         $this->app->singleton(Client::class, function () {
-            if (!class_exists('Manticoresearch\Client')) {
-                throw new \RuntimeException('Manticoresearch PHP client is not installed. Run composer require manticoresoftware/manticoresearch-php');
+            if (!class_exists(Client::class)) {
+                throw new RuntimeException('Manticoresearch PHP client is not installed. Run composer require manticoresoftware/manticoresearch-php');
+            }
+
+            $host = config('laravel_manticore.host', '127.0.0.1');
+            $port = config('laravel_manticore.port', 9308);
+            $debug = config('laravel_manticore.debug', false);
+
+            if ($debug) {
+                Log::debug('[laravel-manticore] Connecting to Manticore using config:', [
+                    'host' => $host,
+                    'port' => $port,
+                ]);
             }
 
             try {
                 return new Client([
-                    'host' => config('laravel_manticore.host', '127.0.0.1'),
-                    'port' => config('laravel_manticore.port', 9308),
+                    'host' => $host,
+                    'port' => $port,
                 ]);
             } catch (\Throwable $e) {
-                throw new \RuntimeException('Failed to connect to Manticore server: '.$e->getMessage());
+                throw new RuntimeException('Failed to connect to Manticore server: '.$e->getMessage());
             }
         });
     }
