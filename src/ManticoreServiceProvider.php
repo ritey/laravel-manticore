@@ -18,7 +18,7 @@ class ManticoreServiceProvider extends ServiceProvider
     public function register()
     {
         // Merge package configuration with namespaced key
-        $this->mergeConfigFrom(__DIR__.'/../config/manticore.php', 'laravel_manticore');
+        $this->mergeConfigFrom(__DIR__.'/../config/laravel_manticore.php', 'laravel_manticore');
 
         // Bind Manticore Client singleton with graceful fallback
         $this->app->singleton(Client::class, function () {
@@ -39,9 +39,8 @@ class ManticoreServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        // Publish configuration with renamed file under Laravel's default 'config' tag
         $this->publishes([
-            __DIR__.'/../config/manticore.php' => config_path('laravel_manticore.php'),
+            __DIR__.'/../config/laravel_manticore.php' => config_path('laravel_manticore.php'),
         ], 'config');
 
         if ($this->app->runningInConsole()) {
