@@ -20,7 +20,7 @@ Post::search('')
 ## JSON Filter Search
 
 ```php
-use YourName\ManticoreScout\FilterBuilder;
+use Ritey\LaravelManticore\FilterBuilder;
 
 $filters = (new FilterBuilder)
     ->where('metadata.topic', 'science')

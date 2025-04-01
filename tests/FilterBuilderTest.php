@@ -1,13 +1,18 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use YourName\ManticoreScout\FilterBuilder;
+use Ritey\LaravelManticore\FilterBuilder;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class FilterBuilderTest extends TestCase
 {
     public function testWhereEquals()
     {
-        $builder = (new FilterBuilder)->where('field', 'value');
+        $builder = (new FilterBuilder())->where('field', 'value');
         $filters = $builder->get();
 
         $this->assertEquals([['equals' => ['field' => 'value']]], $filters);
@@ -15,7 +20,7 @@ class FilterBuilderTest extends TestCase
 
     public function testWhereIn()
     {
-        $builder = (new FilterBuilder)->whereIn('field', ['a', 'b']);
+        $builder = (new FilterBuilder())->whereIn('field', ['a', 'b']);
         $filters = $builder->get();
 
         $this->assertEquals([['in' => ['field' => ['a', 'b']]]], $filters);
@@ -23,7 +28,7 @@ class FilterBuilderTest extends TestCase
 
     public function testWhereNot()
     {
-        $builder = (new FilterBuilder)->whereNot('status', 'inactive');
+        $builder = (new FilterBuilder())->whereNot('status', 'inactive');
         $filters = $builder->get();
 
         $this->assertEquals([['not' => ['equals' => ['status' => 'inactive']]]], $filters);
@@ -31,7 +36,7 @@ class FilterBuilderTest extends TestCase
 
     public function testWhereRange()
     {
-        $builder = (new FilterBuilder)->whereRange('score', ['gte' => 0.5]);
+        $builder = (new FilterBuilder())->whereRange('score', ['gte' => 0.5]);
         $filters = $builder->get();
 
         $this->assertEquals([['range' => ['score' => ['gte' => 0.5]]]], $filters);
