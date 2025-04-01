@@ -1,9 +1,9 @@
 <?php
+
 /**
  * Laravel Manticore Scout
- * (c) Ritey, MIT License
+ * (c) Ritey, MIT License.
  */
-
 
 namespace Ritey\LaravelManticore;
 
@@ -19,8 +19,8 @@ class ManticoreServiceProvider extends ServiceProvider
     {
         $this->app->singleton(Client::class, function () {
             return new Client([
-                'host' => config('manticore.host', '127.0.0.1'),
-                'port' => config('manticore.port', 9308),
+                'host' => config('laravel_manticore.host', '127.0.0.1'),
+                'port' => config('laravel_manticore.port', 9308),
             ]);
         });
     }

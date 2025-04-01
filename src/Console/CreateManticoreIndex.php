@@ -1,9 +1,9 @@
 <?php
+
 /**
  * Laravel Manticore Scout
- * (c) Ritey, MIT License
+ * (c) Ritey, MIT License.
  */
-
 
 namespace Ritey\LaravelManticore\Console;
 
@@ -20,18 +20,21 @@ class CreateManticoreIndex extends Command
         $modelClass = $this->argument('model');
         if (!class_exists($modelClass)) {
             $this->error("Model class {$modelClass} not found.");
+
             return;
         }
 
-        $model = new $modelClass;
+        $model = new $modelClass();
         if (!method_exists($model, 'toSearchableArray')) {
-            $this->error("Model does not implement toSearchableArray().");
+            $this->error('Model does not implement toSearchableArray().');
+
             return;
         }
 
         $fields = $model->toSearchableArray();
         if (!is_array($fields) || empty($fields)) {
-            $this->error("toSearchableArray() returned empty or invalid data.");
+            $this->error('toSearchableArray() returned empty or invalid data.');
+
             return;
         }
 
@@ -40,7 +43,7 @@ class CreateManticoreIndex extends Command
 
         foreach ($fields as $key => $value) {
             if (is_array($value) && isset($value[0]) && is_float($value[0])) {
-                $columns[] = "{$key} VECTOR(" . count($value) . ") TYPE FLOAT";
+                $columns[] = "{$key} VECTOR(".count($value).') TYPE FLOAT';
             } elseif (is_numeric($value)) {
                 $columns[] = "{$key} FLOAT";
             } elseif (is_string($value)) {
@@ -50,12 +53,13 @@ class CreateManticoreIndex extends Command
             }
         }
 
-        $sql = "CREATE TABLE IF NOT EXISTS {$indexName} (" . implode(', ', $columns) . ")";
+        $sql = "CREATE TABLE IF NOT EXISTS {$indexName} (".implode(', ', $columns).')';
+
         try {
             app(Client::class)->sql($sql);
             $this->info("Index {$indexName} created successfully.");
         } catch (\Throwable $e) {
-            $this->error("SQL Error: " . $e->getMessage());
+            $this->error('SQL Error: '.$e->getMessage());
         }
     }
 }
