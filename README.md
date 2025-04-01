@@ -142,3 +142,63 @@ $builder->facets = ['type', 'metadata.topic'];
 ```
 
 Results will include `aggs` with counts for each unique value.
+
+---
+
+## ⚡ Quick Start
+
+1. **Install the package**
+
+If using locally:
+```bash
+composer require ritey/laravel-manticore
+```
+
+2. **Set `.env` config**
+
+```env
+SCOUT_DRIVER=manticore
+MANTICORE_HOST=127.0.0.1
+MANTICORE_PORT=9308
+MANTICORE_SIMILARITY=dotproduct
+MANTICORE_VECTOR_FIELD=embedding
+MANTICORE_IMPORT_CHUNK_SIZE=500
+```
+
+3. **Prepare your model**
+
+```php
+use Laravel\Scout\Searchable;
+
+class Post extends Model
+{
+    use Searchable;
+
+    public function toSearchableArray()
+    {
+        return [
+            'title' => $this->title,
+            'content' => $this->content,
+            'embedding' => $this->embedding
+        ];
+    }
+
+    public function searchableAs(): string
+    {
+        return 'posts_index';
+    }
+}
+```
+
+4. **Create and sync the index**
+
+```bash
+php artisan manticore:create-index "App\Models\Post"
+php artisan manticore:sync-index "App\Models\Post"
+```
+
+5. **Search**
+
+```php
+Post::search('climate change')->get();
+```
