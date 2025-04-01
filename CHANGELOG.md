@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.0.1] - 2025-04-01
+
+### Added
+- Graceful error handling if `manticoresoftware/manticoresearch-php` is missing or Manticore server is unreachable
+- Exception handling for `update()`, `delete()`, and `search()` operations in `ManticoreEngine`
+- Support for Laravel Scout required methods: `map()` and `getTotalCount()`
+- Automatic configuration merge via `mergeConfigFrom()` in the service provider
+- Config publishing via `vendor:publish --tag=manticore-config`
+
+### Improved
+- Safer integration with Laravel through better fallback mechanisms
+
+
 All notable changes to this project will be documented in this file.
 
 ---

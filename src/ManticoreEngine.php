@@ -22,20 +22,30 @@ class ManticoreEngine extends Engine
 
     public function update($models)
     {
-        foreach ($models as $model) {
+        try {
+    {
+                            try {
+            foreach ($models as $model) {
             $index = $model->searchableAs();
             $data = $model->toSearchableArray();
             $data['id'] = $model->getKey();
 
             $this->client->index($index)->addDocuments([$data]);
         }
+            } catch (\Throwable $e) {
+            throw new \RuntimeException('Manticore update failed: ' . $e->getMessage());
+        }
     }
 
     public function delete($models)
     {
-        foreach ($models as $model) {
+                            try {
+            foreach ($models as $model) {
             $index = $model->searchableAs();
             $this->client->index($index)->deleteDocument($model->getKey());
+        }
+            } catch (\Throwable $e) {
+            throw new \RuntimeException('Manticore delete failed: ' . $e->getMessage());
         }
     }
 
@@ -48,9 +58,14 @@ class ManticoreEngine extends Engine
     {
         $offset = ($page - 1) * $perPage;
         return $this->buildSearch($builder, $perPage, $offset);
+            } catch (\Throwable $e) {
+            throw new \RuntimeException('Manticore search query failed: ' . $e->getMessage());
+        }
     }
 
     protected function buildSearch($builder, $size, $from)
+    {
+        try {
     {
         $index = $builder->model->searchableAs();
         $vector = $builder->vector ?? null;
