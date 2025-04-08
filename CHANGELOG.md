@@ -1,3 +1,9 @@
+## [Unreleased]
+### Added
+- Laravel Scout 10+ compatibility
+- Implemented `createIndex`, `deleteIndex`, and `lazyMap` in `ManticoreEngine`
+- Enhanced error handling for index operations
+
 All notable changes to this project will be documented in this file.
 
 ---

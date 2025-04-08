@@ -165,3 +165,19 @@ Laravel will log connection config to the default logger.
 ## 📄 License
 
 MIT License. (c) Ritey
+
+
+---
+
+## 🛠 Programmatic Index Management (Scout 10+)
+
+In addition to Artisan commands, indexes can be created or deleted via Laravel Scout:
+
+```php
+use Laravel\Scout\EngineManager;
+
+$engine = resolve(EngineManager::class)->engine('manticore');
+$engine->createIndex('posts_index');
+$engine->deleteIndex('posts_index');
+```
+

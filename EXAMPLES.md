@@ -116,3 +116,17 @@ foreach ($results as $result) {
 
 $facets = $results->raw()['aggregations'] ?? [];
 ```
+
+
+---
+
+## Programmatic Index Management
+
+```php
+use Laravel\Scout\EngineManager;
+
+$engine = resolve(EngineManager::class)->engine('manticore');
+
+$engine->createIndex('posts_index');
+$engine->deleteIndex('posts_index');
+```

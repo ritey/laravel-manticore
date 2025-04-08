@@ -8,6 +8,7 @@
 namespace Ritey\LaravelManticore;
 
 use Illuminate\Database\Eloquent\Collection;
+use Laravel\Scout\Builder;
 use Laravel\Scout\Engines\Engine;
 use Manticoresearch\Client;
 
@@ -49,22 +50,23 @@ class ManticoreEngine extends Engine
 
     public function search($builder)
     {
+        return $this->buildSearch($builder, $builder->limit ?? 10, 0);
+    }
+
+    public function paginate($builder, $perPage, $page)
+    {
+        $offset = ($page - 1) * $perPage;
+
         try {
-            return $this->buildSearch($builder, $builder->limit ?? 10, 0);
+            return $this->buildSearch($builder, $perPage, $offset);
         } catch (\Throwable $e) {
             throw new \RuntimeException('Manticore search query failed: '.$e->getMessage());
         }
     }
 
-    public function paginate($builder, $perPage, $page)
+    public function lazyMap(Builder $builder, $results, $model)
     {
-        try {
-            $offset = ($page - 1) * $perPage;
-
-            return $this->buildSearch($builder, $perPage, $offset);
-        } catch (\Throwable $e) {
-            throw new \RuntimeException('Manticore pagination failed: '.$e->getMessage());
-        }
+        return $this->map($builder, $results, $model);
     }
 
     public function map(Builder $builder, $results, $model)
@@ -90,14 +92,36 @@ class ManticoreEngine extends Engine
 
     public function flush($model)
     {
-        // Not implemented
+        // No bulk flush implemented
+    }
+
+    public function createIndex($name, array $options = [])
+    {
+        try {
+            $this->client->indices()->create(['index' => $name]);
+
+            return true;
+        } catch (\Throwable $e) {
+            throw new \RuntimeException("Failed to create index '{$name}': ".$e->getMessage());
+        }
+    }
+
+    public function deleteIndex($name)
+    {
+        try {
+            $this->client->indices()->drop(['index' => $name]);
+
+            return true;
+        } catch (\Throwable $e) {
+            throw new \RuntimeException("Failed to delete index '{$name}': ".$e->getMessage());
+        }
     }
 
     protected function buildSearch($builder, $size, $from)
     {
         $index = $builder->model->searchableAs();
         $vector = $builder->vector ?? null;
-        $similarity = $builder->similarity ?: config('laravel_manticore.similarity', 'dotproduct');
+        $similarity = $builder->similarity ?: config('manticore.similarity', 'dotproduct');
         $filterBuilder = $builder->filterBuilder ?? null;
         $sort = $builder->sort ?? null;
         $boosts = $builder->boosts ?? [];
@@ -114,14 +138,17 @@ class ManticoreEngine extends Engine
         }
 
         if ($vector) {
-            $mustClauses[] = [
+            $scriptScore = [
                 'script_score' => [
                     'script' => [
                         'source' => "{$similarity}(embedding, params.query_vector)",
-                        'params' => ['query_vector' => $vector],
+                        'params' => [
+                            'query_vector' => $vector,
+                        ],
                     ],
                 ],
             ];
+            $mustClauses[] = $scriptScore;
         }
 
         $query = count($mustClauses) > 1 ? ['bool' => ['must' => $mustClauses]] : $mustClauses[0];
@@ -149,7 +176,9 @@ class ManticoreEngine extends Engine
             }
         }
 
-        $queryBody['highlight'] = ['fields' => ['*' => new \stdClass()]];
+        $queryBody['highlight'] = [
+            'fields' => ['*' => new \stdClass()],
+        ];
 
         if ($sort && is_array($sort)) {
             $queryBody['sort'] = $sort;
