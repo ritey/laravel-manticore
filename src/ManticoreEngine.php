@@ -67,7 +67,7 @@ class ManticoreEngine extends Engine
         }
     }
 
-    public function map($results, $model)
+    public function map(Builder $builder, $results, $model)
     {
         if (!isset($results['hits']['hits'])) {
             return Collection::make();
