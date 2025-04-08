@@ -18,7 +18,7 @@ A Laravel Scout engine for [Manticore Search](https://manticoresearch.com), supp
 composer require ritey/laravel-manticore
 ```
 
-Publish config (optional):
+Publish the config file (optional):
 
 ```bash
 php artisan vendor:publish --tag=config
@@ -34,18 +34,17 @@ In `config/scout.php`:
 'driver' => 'manticore',
 ```
 
-In `.env` or `config/manticore.php`:
+In `.env` or `config/laravel_manticore.php`:
 
 ```env
-MANTICORE_HOST=127.0.0.1
-MANTICORE_PORT=9308
+LARAVEL_MANTICORE_HOST=127.0.0.1
+LARAVEL_MANTICORE_PORT=9308
+LARAVEL_MANTICORE_DEBUG=true
 ```
 
 ---
 
-## 📦 Usage
-
-### Make a model searchable
+## 🏗 Making a Model Searchable
 
 ```php
 use Laravel\Scout\Searchable;
@@ -65,7 +64,7 @@ class Post extends Model
             'title' => $this->title,
             'body' => $this->body,
             'metadata' => $this->metadata,
-            'embedding' => $this->embedding, // vector array
+            'embedding' => $this->embedding,
         ];
     }
 }
@@ -73,7 +72,33 @@ class Post extends Model
 
 ---
 
-### Search with vector + filters + sorting
+## 🛠 Index Management
+
+Run once per model to initialize index:
+
+```bash
+php artisan manticore:create-index "App\Models\Post"
+```
+
+To sync field types after changes:
+
+```bash
+php artisan manticore:sync-index "App\Models\Post"
+```
+
+---
+
+## 🔍 Basic Search Example
+
+```php
+Post::search('open education')->get();
+```
+
+---
+
+## 🚀 Advanced Search
+
+### With vector + filters
 
 ```php
 use Ritey\LaravelManticore\FilterBuilder;
@@ -85,120 +110,58 @@ $filters = (new FilterBuilder)
 Post::search('ai in education')
     ->tap(function ($builder) use ($filters, $vector) {
         $builder->vector = $vector;
-        $builder->boosts = ['title' => 2.5];
         $builder->filterBuilder = $filters;
-        $builder->sort = [['created_at' => 'desc']];
+        $builder->similarity = 'cosine';
     })
-    ->paginate(10);
+    ->get();
 ```
 
----
-
-## 🛠 Artisan Commands
-
-```bash
-php artisan manticore:create-index "App\Models\Post"
-php artisan manticore:sync-index "App\Models\Post"
-```
-
----
-
-## 📜 License
-
-This package is open-sourced software licensed under the [MIT license](LICENSE).
-
-
----
-
-## 🧩 Faceting Support
-
-You can request facets (aggregations) by passing:
+### Sorting
 
 ```php
-$builder->facets = ['type', 'metadata.topic'];
+Post::search('ai')
+    ->tap(fn($b) => $b->sort = [['score' => 'desc']])
+    ->get();
 ```
 
-This will return doc counts for each unique value in those fields.
-
-
----
-
-## ✨ Highlighting Support
-
-Search results can return highlighted text fragments:
+### Boosting Fields
 
 ```php
-$result->highlight['title'] ?? []
+Post::search('language learning')
+    ->tap(fn($b) => $b->boosts = ['title' => 2.0, 'body' => 1.0])
+    ->get();
 ```
 
 ---
 
-## 🧩 Faceting Support
-
-Enable facets for sidebar filters or aggregations:
+## 📊 Facets
 
 ```php
-$builder->facets = ['type', 'metadata.topic'];
+Post::search('climate')
+    ->tap(fn($b) => $b->facets = ['metadata.topic'])
+    ->get();
 ```
-
-Results will include `aggs` with counts for each unique value.
 
 ---
 
-## ⚡ Quick Start
+## 💡 Highlighting (Default Enabled)
 
-1. **Install the package**
+Results include highlighting in `highlight` key.
 
-If using locally:
-```bash
-composer require ritey/laravel-manticore
-```
+---
 
-2. **Set `.env` config**
+## 🧪 Debugging
+
+Enable logging by setting:
 
 ```env
-SCOUT_DRIVER=manticore
-MANTICORE_HOST=127.0.0.1
-MANTICORE_PORT=9308
-MANTICORE_SIMILARITY=dotproduct
-MANTICORE_VECTOR_FIELD=embedding
-MANTICORE_IMPORT_CHUNK_SIZE=500
+LARAVEL_MANTICORE_DEBUG=true
 ```
 
-3. **Prepare your model**
+Laravel will log connection config to the default logger.
 
-```php
-use Laravel\Scout\Searchable;
+---
 
-class Post extends Model
-{
-    use Searchable;
+## 📄 License
 
-    public function toSearchableArray()
-    {
-        return [
-            'title' => $this->title,
-            'content' => $this->content,
-            'embedding' => $this->embedding
-        ];
-    }
-
-    public function searchableAs(): string
-    {
-        return 'posts_index';
-    }
-}
-```
-
-4. **Create and sync the index**
-
-```bash
-php artisan manticore:create-index "App\Models\Post"
-php artisan manticore:sync-index "App\Models\Post"
-```
-
-5. **Search**
-
-```php
-Post::search('climate change')->get();
-```
+MIT License. (c) Ritey

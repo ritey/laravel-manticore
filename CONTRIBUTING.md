@@ -67,3 +67,10 @@ Instead, email **security@ritey.io** or use GitHub’s security tab.
 
 Your contributions make this project better for everyone.  
 Let’s build a smarter search experience for Laravel developers 💡
+
+
+---
+
+## 📜 Code of Conduct
+
+Please review or add a `CODE_OF_CONDUCT.md` if needed. We aim to foster an inclusive, respectful environment.

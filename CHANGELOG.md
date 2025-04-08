@@ -1,3 +1,7 @@
+All notable changes to this project will be documented in this file.
+
+---
+
 # Changelog
 
 ## [1.0.1] - 2025-04-01
@@ -12,10 +16,6 @@
 ### Improved
 - Safer integration with Laravel through better fallback mechanisms
 
-
-All notable changes to this project will be documented in this file.
-
----
 
 ## [1.0.0] - 2025-03-30
 

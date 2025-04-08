@@ -1,5 +1,15 @@
 # Laravel Manticore Scout — Example Usage
 
+This file provides real-world examples of using Manticore with Laravel Scout for various search strategies.
+
+## Table of Contents
+- [Basic Full-text Search](#basic-full-text-search)
+- [Vector Search](#vector-search)
+- [JSON Filter Search](#json-filter-search)
+- [Hybrid Search with Boosting](#hybrid-search-with-boosting)
+
+# Laravel Manticore Scout — Example Usage
+
 ## Basic Full-text Search
 
 ```php
