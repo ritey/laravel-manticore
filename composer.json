@@ -39,6 +39,7 @@
         "nlp"
     ],
     "require-dev": {
-        "phpunit/phpunit": "^9.0"
+        "phpunit/phpunit": "^9.0",
+        "orchestra/testbench": "^8.0"
     }
 }
