@@ -43,7 +43,7 @@ class CreateManticoreIndex extends Command
 
         foreach ($fields as $key => $value) {
             if (is_array($value) && isset($value[0]) && is_float($value[0])) {
-                $schema[] = [$key => 'float[]']; // VECTOR emulation
+                $schema[] = [$key => 'float[]'];
             } elseif (is_numeric($value)) {
                 $schema[] = [$key => 'float'];
             } elseif (is_string($value)) {
@@ -53,10 +53,13 @@ class CreateManticoreIndex extends Command
             }
         }
 
+        $settings = config('laravel_manticore.defaults.index_settings', []);
+
         try {
             app(Client::class)->indices()->create([
                 'index' => $indexName,
                 'body' => [
+                    'settings' => $settings,
                     'schema' => $schema,
                 ],
             ]);

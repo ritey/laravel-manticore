@@ -39,4 +39,14 @@ return [
     'import_chunk_size' => env('MANTICORE_IMPORT_CHUNK_SIZE', 500),
 
     'debug' => env('MANTICORE_DEBUG', false),
+
+    'defaults' => [
+        'index_settings' => [
+            'ngram_len' => 1,
+            'ngram_chars' => 'utf8',
+            'charset_table' => 'CJK',
+            'min_infix_len' => 1,
+            'prefix_fields' => [],
+        ],
+    ],
 ];
