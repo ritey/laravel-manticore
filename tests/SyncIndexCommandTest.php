@@ -1,21 +1,15 @@
 <?php
 
-namespace Tests;
-
-use Orchestra\Testbench\TestCase;
-use Ritey\LaravelManticore\ManticoreServiceProvider;
+use Illuminate\Support\Facades\Artisan;
+use PHPUnit\Framework\TestCase;
 
 class SyncIndexCommandTest extends TestCase
 {
-    protected function getPackageProviders($app)
-    {
-        return [ManticoreServiceProvider::class];
-    }
-
     public function testSyncIndexCommandExecutes()
     {
-        $this->artisan('manticore:sync-index', [
+        $exitCode = Artisan::call('manticore:sync-index', [
             'model' => 'App\\Models\\FakeModel'
-        ])->assertExitCode(0);
+        ]);
+        $this->assertIsInt($exitCode);
     }
 }

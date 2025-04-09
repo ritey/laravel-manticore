@@ -5,19 +5,22 @@ namespace Tests;
 use PHPUnit\Framework\TestCase;
 use Ritey\LaravelManticore\ManticoreEngine;
 use Manticoresearch\Client;
+use Manticoresearch\Index;
 
 class ManticoreEngineTest extends TestCase
 {
     public function testUpdate()
     {
-        $mockIndex = $this->getMockBuilder(\stdClass::class)
-            ->addMethods(['addDocuments'])
+        $mockIndex = $this->getMockBuilder(Index::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['addDocuments'])
             ->getMock();
 
         $mockIndex->expects($this->once())->method('addDocuments');
 
         $client = $this->getMockBuilder(Client::class)
             ->disableOriginalConstructor()
+            ->onlyMethods(['index'])
             ->getMock();
 
         $client->method('index')->willReturn($mockIndex);
@@ -36,14 +39,16 @@ class ManticoreEngineTest extends TestCase
 
     public function testDelete()
     {
-        $mockIndex = $this->getMockBuilder(\stdClass::class)
-            ->addMethods(['deleteDocument'])
+        $mockIndex = $this->getMockBuilder(Index::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['deleteDocument'])
             ->getMock();
 
         $mockIndex->expects($this->once())->method('deleteDocument');
 
         $client = $this->getMockBuilder(Client::class)
             ->disableOriginalConstructor()
+            ->onlyMethods(['index'])
             ->getMock();
 
         $client->method('index')->willReturn($mockIndex);

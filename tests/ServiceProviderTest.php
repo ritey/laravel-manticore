@@ -14,6 +14,13 @@ class ServiceProviderTest extends TestCase
         return [ManticoreServiceProvider::class];
     }
 
+    protected function getEnvironmentSetUp($app)
+    {
+        $app['config']->set('scout.driver', 'manticore');
+        $app['config']->set('laravel_manticore.host', '127.0.0.1');
+        $app['config']->set('laravel_manticore.port', 9308);
+    }
+
     public function testBootRegistersEngine()
     {
         $engine = resolve(EngineManager::class)->engine('manticore');
