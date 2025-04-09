@@ -121,7 +121,7 @@ class ManticoreEngine extends Engine
     {
         $index = $builder->model->searchableAs();
         $vector = $builder->vector ?? null;
-        $similarity = $builder->similarity ?: config('manticore.similarity', 'dotproduct');
+        $similarity = $builder->macro_similarity ?? config('manticore.similarity', 'dotproduct');
         $filterBuilder = $builder->filterBuilder ?? null;
         $sort = $builder->sort ?? null;
         $boosts = $builder->boosts ?? [];
