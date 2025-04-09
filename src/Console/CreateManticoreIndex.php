@@ -56,7 +56,9 @@ class CreateManticoreIndex extends Command
         try {
             app(Client::class)->indices()->create([
                 'index' => $indexName,
-                'schema' => $schema,
+                'body' => [
+                    'schema' => $schema,
+                ],
             ]);
             $this->info("Index {$indexName} created successfully.");
         } catch (\Throwable $e) {
