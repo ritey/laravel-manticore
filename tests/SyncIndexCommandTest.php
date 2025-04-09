@@ -1,15 +1,28 @@
 <?php
 
-use Illuminate\Support\Facades\Artisan;
-use PHPUnit\Framework\TestCase;
+namespace Tests;
+
+use Orchestra\Testbench\TestCase;
+use Ritey\LaravelManticore\ManticoreServiceProvider;
 
 class SyncIndexCommandTest extends TestCase
 {
+    protected function getPackageProviders($app)
+    {
+        return [ManticoreServiceProvider::class];
+    }
+
+    protected function getEnvironmentSetUp($app)
+    {
+        $app['config']->set('scout.driver', 'manticore');
+        $app['config']->set('laravel_manticore.host', '127.0.0.1');
+        $app['config']->set('laravel_manticore.port', 9308);
+    }
+
     public function testSyncIndexCommandExecutes()
     {
-        $exitCode = Artisan::call('manticore:sync-index', [
+        $this->artisan('manticore:sync-index', [
             'model' => 'App\\Models\\FakeModel'
-        ]);
-        $this->assertIsInt($exitCode);
+        ])->assertExitCode(0);
     }
 }
