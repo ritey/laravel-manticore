@@ -18,13 +18,15 @@ class CreateManticoreIndex extends Command
     public function handle()
     {
         $modelClass = $this->argument('model');
+
         if (!class_exists($modelClass)) {
             $this->error("Model class {$modelClass} not found.");
 
             return;
         }
 
-        $model = new $modelClass();
+        $model = $modelClass::query()->first() ?? new $modelClass();
+
         if (!method_exists($model, 'toSearchableArray')) {
             $this->error('Model does not implement toSearchableArray().');
 
@@ -32,8 +34,20 @@ class CreateManticoreIndex extends Command
         }
 
         $fields = $model->toSearchableArray();
-        if (!is_array($fields) || empty($fields)) {
-            $this->error('toSearchableArray() returned empty or invalid data.');
+
+        // If fields are empty and fallback provided, parse --fields option
+        if (empty(array_filter($fields)) && $this->option('fields')) {
+            $fields = collect(explode(',', $this->option('fields')))
+                ->mapWithKeys(function ($field) {
+                    $parts = explode(':', $field);
+
+                    return [$parts[0] => $parts[1] ?? 'text'];
+                })->all()
+            ;
+        }
+
+        if (empty($fields)) {
+            $this->error('No fields found from model or --fields option.');
 
             return;
         }
@@ -48,6 +62,8 @@ class CreateManticoreIndex extends Command
                 $schema[] = [$key => 'float'];
             } elseif (is_string($value)) {
                 $schema[] = [$key => 'text'];
+            } elseif (in_array($value, ['text', 'float', 'json', 'string', 'int', 'float[]'])) {
+                $schema[] = [$key => $value];
             } else {
                 $schema[] = [$key => 'json'];
             }
