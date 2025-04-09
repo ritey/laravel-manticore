@@ -12,8 +12,8 @@ use Manticoresearch\Client;
 
 class CreateManticoreIndex extends Command
 {
-    protected $signature = 'manticore:create-index {model}';
-    protected $description = 'Create a Manticore RT index based on a Laravel searchable model';
+    protected $signature = 'manticore:create-index {model} {--fields=}';
+    protected $description = 'Create a Manticore RT index based on a Laravel searchable model, with optional fallback fields if no records exist';
 
     public function handle()
     {
