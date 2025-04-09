@@ -56,6 +56,7 @@ class ManticoreServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 CreateManticoreIndex::class,
+                DeleteManticoreIndex::class,
                 SyncManticoreIndex::class,
             ]);
         }
