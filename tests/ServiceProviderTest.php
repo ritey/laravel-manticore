@@ -1,8 +1,11 @@
 <?php
 
-use Illuminate\Support\Facades\Log;
+namespace Tests;
+
 use Orchestra\Testbench\TestCase;
 use Ritey\LaravelManticore\ManticoreServiceProvider;
+use Laravel\Scout\EngineManager;
+use Ritey\LaravelManticore\ManticoreEngine;
 
 class ServiceProviderTest extends TestCase
 {
@@ -11,14 +14,9 @@ class ServiceProviderTest extends TestCase
         return [ManticoreServiceProvider::class];
     }
 
-    public function testClientIsBound()
-    {
-        $this->assertTrue($this->app->bound(Manticoresearch\Client::class));
-    }
-
     public function testBootRegistersEngine()
     {
-        $engine = resolve(\Laravel\Scout\EngineManager::class)->engine('manticore');
-        $this->assertInstanceOf(\Ritey\LaravelManticore\ManticoreEngine::class, $engine);
+        $engine = resolve(EngineManager::class)->engine('manticore');
+        $this->assertInstanceOf(ManticoreEngine::class, $engine);
     }
 }

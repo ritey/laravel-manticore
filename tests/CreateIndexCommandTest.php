@@ -1,16 +1,21 @@
 <?php
 
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Log;
-use PHPUnit\Framework\TestCase;
+namespace Tests;
+
+use Orchestra\Testbench\TestCase;
+use Ritey\LaravelManticore\ManticoreServiceProvider;
 
 class CreateIndexCommandTest extends TestCase
 {
+    protected function getPackageProviders($app)
+    {
+        return [ManticoreServiceProvider::class];
+    }
+
     public function testCreateIndexCommandExecutes()
     {
-        $exitCode = Artisan::call('manticore:create-index', [
+        $this->artisan('manticore:create-index', [
             'model' => 'App\\Models\\FakeModel'
-        ]);
-        $this->assertIsInt($exitCode);
+        ])->assertExitCode(0);
     }
 }
