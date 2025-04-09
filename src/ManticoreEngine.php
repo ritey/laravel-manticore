@@ -185,7 +185,7 @@ class ManticoreEngine extends Engine
         }
 
         return $this->client->search([
-            'index' => $index,
+            'table' => $index,
             'body' => $queryBody,
         ]);
     }
