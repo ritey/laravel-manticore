@@ -16,6 +16,11 @@ class ServiceProviderTest extends TestCase
 {
     public function testBootRegistersEngine()
     {
+        // Trigger the engine manager to boot after config and providers are set
+        $this->app['config']->set('scout.driver', 'manticore');
+        $this->app->register(ManticoreServiceProvider::class);
+
+        // Now resolve the engine
         $engine = resolve(EngineManager::class)->engine('manticore');
         $this->assertInstanceOf(ManticoreEngine::class, $engine);
     }
