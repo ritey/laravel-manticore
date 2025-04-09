@@ -9,6 +9,7 @@ namespace Ritey\LaravelManticore;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Scout\EngineManager;
 use Manticoresearch\Client;
 use Ritey\LaravelManticore\Console\CreateManticoreIndex;
 use Ritey\LaravelManticore\Console\SyncManticoreIndex;
@@ -21,7 +22,7 @@ class ManticoreServiceProvider extends ServiceProvider
 
         $this->app->singleton(Client::class, function () {
             if (!class_exists(Client::class)) {
-                throw new RuntimeException('Manticoresearch PHP client is not installed. Run composer require manticoresoftware/manticoresearch-php');
+                throw new \RuntimeException('Manticoresearch PHP client is not installed. Run composer require manticoresoftware/manticoresearch-php');
             }
 
             $host = config('laravel_manticore.host', '127.0.0.1');
@@ -41,17 +42,8 @@ class ManticoreServiceProvider extends ServiceProvider
                     'port' => $port,
                 ]);
             } catch (\Throwable $e) {
-                throw new RuntimeException('Failed to connect to Manticore server: '.$e->getMessage());
+                throw new \RuntimeException('Failed to connect to Manticore server: '.$e->getMessage());
             }
-        });
-
-        // Register engine early in lifecycle
-        $this->app->extend(EngineManager::class, function (EngineManager $manager, $app) {
-            $manager->extend('manticore', function () {
-                return new ManticoreEngine(resolve(Client::class));
-            });
-
-            return $manager;
         });
     }
 
@@ -67,5 +59,12 @@ class ManticoreServiceProvider extends ServiceProvider
                 SyncManticoreIndex::class,
             ]);
         }
+
+        // Register the engine in the boot method
+        $this->app->resolving(EngineManager::class, function (EngineManager $manager) {
+            $manager->extend('manticore', function ($app) {
+                return new ManticoreEngine($app->make(Client::class));
+            });
+        });
     }
 }
