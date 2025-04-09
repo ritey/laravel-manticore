@@ -1,9 +1,9 @@
 <?php
+
 /**
  * Laravel Manticore Scout
- * (c) Ritey, MIT License
+ * (c) Ritey, MIT License.
  */
-
 
 namespace Ritey\LaravelManticore\Console;
 
@@ -20,42 +20,47 @@ class CreateManticoreIndex extends Command
         $modelClass = $this->argument('model');
         if (!class_exists($modelClass)) {
             $this->error("Model class {$modelClass} not found.");
+
             return;
         }
 
-        $model = new $modelClass;
+        $model = new $modelClass();
         if (!method_exists($model, 'toSearchableArray')) {
-            $this->error("Model does not implement toSearchableArray().");
+            $this->error('Model does not implement toSearchableArray().');
+
             return;
         }
 
         $fields = $model->toSearchableArray();
         if (!is_array($fields) || empty($fields)) {
-            $this->error("toSearchableArray() returned empty or invalid data.");
+            $this->error('toSearchableArray() returned empty or invalid data.');
+
             return;
         }
 
         $indexName = $model->searchableAs();
-        $columns = ['id BIGINT'];
+        $schema = [['id' => 'bigint']];
 
         foreach ($fields as $key => $value) {
             if (is_array($value) && isset($value[0]) && is_float($value[0])) {
-                $columns[] = "{$key} VECTOR(" . count($value) . ") TYPE FLOAT";
+                $schema[] = [$key => 'float[]']; // VECTOR emulation
             } elseif (is_numeric($value)) {
-                $columns[] = "{$key} FLOAT";
+                $schema[] = [$key => 'float'];
             } elseif (is_string($value)) {
-                $columns[] = "{$key} TEXT";
+                $schema[] = [$key => 'text'];
             } else {
-                $columns[] = "{$key} JSON";
+                $schema[] = [$key => 'json'];
             }
         }
 
-        $sql = "CREATE TABLE IF NOT EXISTS {$indexName} (" . implode(', ', $columns) . ")";
         try {
-            app(Client::class)->sql($sql);
+            app(Client::class)->indices()->create([
+                'index' => $indexName,
+                'schema' => $schema,
+            ]);
             $this->info("Index {$indexName} created successfully.");
         } catch (\Throwable $e) {
-            $this->error("SQL Error: " . $e->getMessage());
+            $this->error('Manticore create error: '.$e->getMessage());
         }
     }
 }
