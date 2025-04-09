@@ -78,7 +78,7 @@ class CreateManticoreIndex extends Command
                 'index' => $indexName,
                 'body' => [
                     'settings' => $settings,
-                    'schema' => [$schema],
+                    'schema' => $schema,
                 ],
             ]);
             $this->info("Index {$indexName} created successfully.");
