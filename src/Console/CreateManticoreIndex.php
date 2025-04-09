@@ -33,10 +33,10 @@ class CreateManticoreIndex extends Command
             return;
         }
 
-        $fields = $model->toSearchableArray();
+        $fields = [];
 
-        // If fields are empty and fallback provided, parse --fields option
-        if (empty(array_filter($fields)) && $this->option('fields')) {
+        // Priority: --fields override > database record > model stub
+        if ($this->option('fields')) {
             $fields = collect(explode(',', $this->option('fields')))
                 ->mapWithKeys(function ($field) {
                     $parts = explode(':', $field);
@@ -44,9 +44,11 @@ class CreateManticoreIndex extends Command
                     return [$parts[0] => $parts[1] ?? 'text'];
                 })->all()
             ;
+        } else {
+            $fields = $model->toSearchableArray();
         }
 
-        if (empty($fields)) {
+        if (empty(array_filter($fields))) {
             $this->error('No fields found from model or --fields option.');
 
             return;
