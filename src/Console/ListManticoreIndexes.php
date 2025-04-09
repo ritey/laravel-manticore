@@ -14,17 +14,15 @@ class ListManticoreIndexes extends Command
     {
         try {
             $client = app(Client::class);
-            $result = $client->sql(['body' => ['query' => 'SHOW TABLES']]);
-            $indexes = collect($result['hits']['hits'] ?? []);
-
-            if ($indexes->isEmpty()) {
+            $response = $client->indices()->show();
+            if (empty($response)) {
                 $this->info('No indexes found.');
 
                 return;
             }
 
-            foreach ($indexes as $entry) {
-                $this->line('- '.($entry['index'] ?? $entry['name'] ?? '[unknown]'));
+            foreach ($response as $index) {
+                $this->line('- '.($index['index'] ?? '[unknown]'));
             }
         } catch (Throwable $e) {
             $this->error('Manticore list error: '.$e->getMessage());
