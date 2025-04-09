@@ -59,15 +59,15 @@ class CreateManticoreIndex extends Command
 
         foreach ($fields as $key => $value) {
             if (is_array($value) && isset($value[0]) && is_float($value[0])) {
-                $schema[] = [$key => 'float[]'];
+                $schema[$key] = 'float[]';
             } elseif (is_numeric($value)) {
-                $schema[] = [$key => 'float'];
+                $schema[$key] = 'float';
             } elseif (is_string($value)) {
-                $schema[] = [$key => 'text'];
+                $schema[$key] = 'text';
             } elseif (in_array($value, ['text', 'float', 'json', 'string', 'int', 'float[]'])) {
-                $schema[] = [$key => $value];
+                $schema[$key] = $value;
             } else {
-                $schema[] = [$key => 'json'];
+                $schema[$key] = 'json';
             }
         }
 
