@@ -47,7 +47,7 @@ class SyncManticoreIndex extends Command
 
             $modelClass::chunk(500, function ($models) use (&$documents, $client, $indexName, $bar) {
                 foreach ($models as $model) {
-                    $data = $model->toSearchableArray();
+                    $data = array_filter($model->toSearchableArray(), fn ($v) => !is_null($v));
                     $data['id'] = $model->getScoutKey();
                     $documents[] = $data;
 
