@@ -46,10 +46,12 @@ class ManticoreServiceProvider extends ServiceProvider
         });
 
         // Register engine early in lifecycle
-        $this->app->afterResolving(EngineManager::class, function (EngineManager $manager) {
+        $this->app->extend(EngineManager::class, function (EngineManager $manager, $app) {
             $manager->extend('manticore', function () {
                 return new ManticoreEngine(resolve(Client::class));
             });
+
+            return $manager;
         });
     }
 
