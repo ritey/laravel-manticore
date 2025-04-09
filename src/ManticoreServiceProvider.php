@@ -12,6 +12,7 @@ use Illuminate\Support\ServiceProvider;
 use Laravel\Scout\EngineManager;
 use Manticoresearch\Client;
 use Ritey\LaravelManticore\Console\CreateManticoreIndex;
+use Ritey\LaravelManticore\Console\DeleteManticoreIndex;
 use Ritey\LaravelManticore\Console\SyncManticoreIndex;
 
 class ManticoreServiceProvider extends ServiceProvider
