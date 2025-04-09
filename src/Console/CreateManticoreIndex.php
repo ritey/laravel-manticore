@@ -55,7 +55,7 @@ class CreateManticoreIndex extends Command
         }
 
         $indexName = $model->searchableAs();
-        $schema = [['id' => 'bigint']];
+        $schema = ['id' => 'bigint'];
 
         foreach ($fields as $key => $value) {
             if (is_array($value) && isset($value[0]) && is_float($value[0])) {
@@ -78,7 +78,7 @@ class CreateManticoreIndex extends Command
                 'index' => $indexName,
                 'body' => [
                     'settings' => $settings,
-                    'schema' => $schema,
+                    'schema' => [$schema],
                 ],
             ]);
             $this->info("Index {$indexName} created successfully.");
