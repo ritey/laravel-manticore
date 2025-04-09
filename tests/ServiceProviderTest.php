@@ -23,6 +23,8 @@ class ServiceProviderTest extends TestCase
 
     public function testBootRegistersEngine()
     {
+        $this->app->make('config')->set('scout.driver', 'manticore');
+        $this->app->make(ManticoreServiceProvider::class)->boot();
         $engine = resolve(EngineManager::class)->engine('manticore');
         $this->assertInstanceOf(ManticoreEngine::class, $engine);
     }
