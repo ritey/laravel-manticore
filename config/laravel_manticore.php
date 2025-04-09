@@ -42,9 +42,10 @@ return [
 
     'defaults' => [
         'index_settings' => [
-            'ngram_len' => 1,
             'ngram_chars' => 'utf8',
-            'charset_table' => 'CJK',
+            'charset_table' => 'chinese',
+            'morphology' => 'icu_chinese',
+            'ngram_len' => 0,
             'min_infix_len' => 1,
             'prefix_fields' => [],
         ],
