@@ -13,6 +13,7 @@ use Laravel\Scout\EngineManager;
 use Manticoresearch\Client;
 use Ritey\LaravelManticore\Console\CreateManticoreIndex;
 use Ritey\LaravelManticore\Console\DeleteManticoreIndex;
+use Ritey\LaravelManticore\Console\ListManticoreIndexes;
 use Ritey\LaravelManticore\Console\SyncManticoreIndex;
 
 class ManticoreServiceProvider extends ServiceProvider
@@ -57,6 +58,7 @@ class ManticoreServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 CreateManticoreIndex::class,
+                ListManticoreIndexes::class,
                 DeleteManticoreIndex::class,
                 SyncManticoreIndex::class,
             ]);

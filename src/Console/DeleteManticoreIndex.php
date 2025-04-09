@@ -16,10 +16,10 @@ class DeleteManticoreIndex extends Command
 
         try {
             $client = app(Client::class);
+            $result = $client->sql(['body' => ['query' => 'SHOW TABLES']]);
+            $indexes = collect($result['hits']['hits'] ?? [])->pluck('index')->toArray();
 
-            // Confirm the index exists before attempting delete
-            $existing = $client->indices()->show();
-            if (!collect($existing)->pluck('index')->contains($index)) {
+            if (!in_array($index, $indexes)) {
                 $this->warn("Index '{$index}' does not exist.");
 
                 return;
