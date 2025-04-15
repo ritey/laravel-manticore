@@ -38,6 +38,11 @@ class ManticoreEngineTest extends TestCase
         $client->method('table')->willReturn($mockIndex);
 
         $model = new class {
+            public function getScoutKey()
+            {
+                return 1;
+            }
+
             public function getKey()
             {
                 return 1;
@@ -79,6 +84,11 @@ class ManticoreEngineTest extends TestCase
         $client->method('table')->willReturn($mockIndex);
 
         $model = new class {
+            public function getScoutKey()
+            {
+                return 1;
+            }
+
             public function getKey()
             {
                 return 1;
