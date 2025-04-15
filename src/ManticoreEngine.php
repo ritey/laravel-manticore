@@ -131,8 +131,12 @@ class ManticoreEngine extends Engine
             foreach ($boosts as $field => $weight) {
                 $mustClauses[] = ['match' => [$field => ['query' => $builder->query, 'boost' => $weight]]];
             }
-        } elseif (!$vector) {
+        } elseif (!$vector && !empty($builder->query)) {
             $mustClauses[] = ['match' => ['*' => $builder->query]];
+        }
+
+        if (empty($mustClauses)) {
+            $mustClauses[] = ['match_all' => new \stdClass()];
         }
 
         if ($vector) {
