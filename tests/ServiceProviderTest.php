@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Laravel Manticore Scout
+ * (c) Ritey, MIT License.
+ */
+
 namespace Tests;
 
 use Laravel\Scout\EngineManager;

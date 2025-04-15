@@ -39,20 +39,20 @@ class SyncManticoreIndex extends Command
 
         try {
             $client = app(Client::class);
-            $documents = [];
             $total = $modelClass::count();
-
             $bar = $this->output->createProgressBar($total);
             $bar->start();
 
-            $modelClass::chunk(500, function ($models) use (&$documents, $client, $indexName, $bar) {
+            $modelClass::chunk(500, function ($models) use ($client, $indexName, $bar) {
+                $documents = [];
+
                 foreach ($models as $model) {
                     $data = array_filter($model->toSearchableArray(), fn ($v) => !is_null($v));
                     $data['id'] = $model->getScoutKey();
                     $documents[] = $data;
 
                     if (count($documents) >= 100) {
-                        $client->index($indexName)->addDocuments($documents);
+                        $client->table($indexName)->addDocuments($documents);
                         $documents = [];
                     }
 
@@ -60,7 +60,7 @@ class SyncManticoreIndex extends Command
                 }
 
                 if (!empty($documents)) {
-                    $client->index($indexName)->addDocuments($documents);
+                    $client->table($indexName)->addDocuments($documents);
                 }
             });
 

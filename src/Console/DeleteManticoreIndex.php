@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Laravel Manticore Scout
+ * (c) Ritey, MIT License.
+ */
+
 namespace Ritey\LaravelManticore\Console;
 
 use Illuminate\Console\Command;
@@ -17,8 +22,9 @@ class DeleteManticoreIndex extends Command
         try {
             $client = app(Client::class);
 
-            // No reliable index list, so try/catch the drop
-            $client->indices()->drop(['index' => $index]);
+            // Use updated tables() method
+            $client->tables()->drop(['index' => $index]);
+
             $this->info("Index '{$index}' deleted successfully.");
         } catch (\Throwable $e) {
             $this->error('Manticore delete error: '.$e->getMessage());

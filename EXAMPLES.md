@@ -125,6 +125,7 @@ $facets = $results->raw()['aggregations'] ?? [];
 ```php
 use Laravel\Scout\EngineManager;
 
+/** @var \Ritey\LaravelManticore\ManticoreEngine $engine */
 $engine = resolve(EngineManager::class)->engine('manticore');
 
 $engine->createIndex('posts_index');

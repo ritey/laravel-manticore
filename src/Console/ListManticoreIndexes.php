@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Laravel Manticore Scout
+ * (c) Ritey, MIT License.
+ */
+
 namespace Ritey\LaravelManticore\Console;
 
 use Illuminate\Console\Command;
@@ -14,7 +19,8 @@ class ListManticoreIndexes extends Command
     {
         try {
             $client = app(Client::class);
-            $response = $client->indices()->show();
+            $response = $client->tables()->show();
+
             if (empty($response)) {
                 $this->info('No indexes found.');
 
@@ -24,7 +30,7 @@ class ListManticoreIndexes extends Command
             foreach ($response as $index) {
                 $this->line('- '.($index['index'] ?? '[unknown]'));
             }
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             $this->error('Manticore list error: '.$e->getMessage());
         }
     }

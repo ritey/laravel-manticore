@@ -74,7 +74,7 @@ class CreateManticoreIndex extends Command
         $settings = config('laravel_manticore.defaults.index_settings', []);
 
         try {
-            app(Client::class)->indices()->create([
+            app(Client::class)->tables()->create([
                 'index' => $indexName,
                 'body' => [
                     'settings' => $settings,

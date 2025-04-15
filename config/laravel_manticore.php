@@ -43,10 +43,10 @@ return [
     'defaults' => [
         'index_settings' => [
             'ngram_chars' => 'utf8',
-            'charset_table' => 'chinese',
-            'morphology' => 'icu_chinese',
-            'ngram_len' => 0,
-            'min_infix_len' => 1,
+            'charset_table' => env('MANTICORE_CHARSET_TABLE', 'chinese'),
+            'morphology' => env('MANTICORE_MORPHOLOGY', 'icu_chinese'),
+            'ngram_len' => env('MANTICORE_NGRAM_LEN', 0),
+            'min_infix_len' => env('MANTICORE_MIN_INFIX_LEN', 1),
             'prefix_fields' => [],
         ],
     ],

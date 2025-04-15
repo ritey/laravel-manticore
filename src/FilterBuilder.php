@@ -1,9 +1,9 @@
 <?php
+
 /**
  * Laravel Manticore Scout
  * (c) Ritey, MIT License
  */
-
 
 namespace Ritey\LaravelManticore;
 
