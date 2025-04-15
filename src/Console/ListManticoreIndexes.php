@@ -13,22 +13,22 @@ use Manticoresearch\Client;
 class ListManticoreIndexes extends Command
 {
     protected $signature = 'manticore:list-indexes';
-    protected $description = 'List all Manticore indexes available';
+    protected $description = 'List all Manticore indexes (tables) available';
 
     public function handle()
     {
         try {
             $client = app(Client::class);
-            $response = $client->tables()->show();
+            $response = $client->sql('SHOW TABLES');
 
             if (empty($response)) {
-                $this->info('No indexes found.');
+                $this->info('No indexes (tables) found.');
 
                 return;
             }
 
-            foreach ($response as $index) {
-                $this->line('- '.($index['index'] ?? '[unknown]'));
+            foreach ($response as $row) {
+                $this->line('- '.($row['Index'] ?? '[unknown]'));
             }
         } catch (\Throwable $e) {
             $this->error('Manticore list error: '.$e->getMessage());

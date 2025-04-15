@@ -55,32 +55,47 @@ class CreateManticoreIndex extends Command
         }
 
         $indexName = $model->searchableAs();
-        $schema = ['id' => 'bigint'];
+        $schema = ['id' => ['type' => 'bigint']];
 
         foreach ($fields as $key => $value) {
+            // Skip null values (but log them if needed)
+            if (is_null($value)) {
+                $schema[$key] = ['type' => 'text']; // default fallback
+
+                continue;
+            }
+
+            // If user passed type explicitly (e.g. from --fields)
+            if (is_string($value) && in_array($value, ['text', 'float', 'int', 'integer', 'json', 'string', 'float[]'])) {
+                $schema[$key] = ['type' => $value];
+
+                continue;
+            }
+
+            // Vector detection
             if (is_array($value) && isset($value[0]) && is_float($value[0])) {
-                $schema[$key] = 'float[]';
-            } elseif (is_numeric($value)) {
-                $schema[$key] = 'float';
+                $schema[$key] = ['type' => 'float[]'];
+            }
+            // Associative array: likely JSON
+            elseif (is_array($value) && array_keys($value) !== range(0, count($value) - 1)) {
+                $schema[$key] = ['type' => 'json', 'options' => ['json_secondary_indexes' => '1']];
+            } elseif (is_int($value)) {
+                $schema[$key] = ['type' => 'int'];
+            } elseif (is_float($value)) {
+                $schema[$key] = ['type' => 'float'];
             } elseif (is_string($value)) {
-                $schema[$key] = 'text';
-            } elseif (in_array($value, ['text', 'float', 'json', 'string', 'int', 'float[]'])) {
-                $schema[$key] = $value;
+                $schema[$key] = ['type' => 'text'];
             } else {
-                $schema[$key] = 'json';
+                $schema[$key] = ['type' => 'json'];
             }
         }
 
         $settings = config('laravel_manticore.defaults.index_settings', []);
 
         try {
-            app(Client::class)->tables()->create([
-                'index' => $indexName,
-                'body' => [
-                    'settings' => $settings,
-                    'schema' => $schema,
-                ],
-            ]);
+            $table = app(Client::class)->table($indexName);
+            $table->create($schema, $settings);
+
             $this->info("Index {$indexName} created successfully.");
         } catch (\Throwable $e) {
             $this->error('Manticore create error: '.$e->getMessage());
