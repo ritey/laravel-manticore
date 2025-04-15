@@ -86,6 +86,9 @@ To sync field types after changes:
 php artisan manticore:sync-index "App\Models\Post"
 ```
 
+// Before running search, make sure your index is populated:
+php artisan scout:import "App\\Models\\Post"
+
 ---
 
 ## 🔍 Basic Search Example
