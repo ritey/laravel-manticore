@@ -8,6 +8,7 @@
 namespace Ritey\LaravelManticore;
 
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Log;
 use Laravel\Scout\Builder;
 use Laravel\Scout\Engines\Engine;
 use Manticoresearch\Client;
@@ -159,9 +160,28 @@ class ManticoreEngine extends Engine
                 }
             }
 
+            if (config('laravel_manticore.debug')) {
+                Log::debug('[laravel-manticore] Executing search with:', [
+                    'table' => $index,
+                    'query' => $builder->query,
+                    'vector' => $vector,
+                    'similarity' => $similarity,
+                    'filters' => $filterBuilder ? $filterBuilder->get() : null,
+                    'boosts' => $boosts,
+                    'sort' => $sort,
+                    'limit' => $size,
+                    'offset' => $from,
+                ]);
+            }
+
             // Execute search
             $results = iterator_to_array($search->get());
 
+            if (config('laravel_manticore.debug')) {
+                Log::debug('[laravel-manticore] Search results returned:', [
+                    'total_hits' => count($results),
+                ]);
+            }
             // Vector search would need to be handled separately,
             // but isn't implemented here to avoid errors
 
