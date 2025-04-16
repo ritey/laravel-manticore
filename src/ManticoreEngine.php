@@ -77,14 +77,18 @@ class ManticoreEngine extends Engine
             return Collection::make();
         }
 
-        $ids = collect($results['hits']['hits'])->pluck('_id')->all();
+        $ids = collect($results['hits']['hits'])->map(function ($hit) {
+            return $hit->getId();
+        })->all();
 
-        return $model->whereIn($model->getKeyName(), $ids)->get();
+        return $model->whereIn($model->getScoutKey(), $ids)->get();
     }
 
     public function mapIds($results)
     {
-        return collect($results['hits']['hits'])->pluck('_id')->values();
+        return $ids = collect($results['hits']['hits'])->map(function ($hit) {
+            return $hit->getId();
+        })->all();
     }
 
     public function getTotalCount($results)
