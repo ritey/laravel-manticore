@@ -81,7 +81,7 @@ class ManticoreEngine extends Engine
             return $hit->getId();
         })->all();
 
-        return $model->whereIn($model->getScoutKey(), $ids)->get();
+        return $model->whereIn($model->getScoutKeyName(), $ids)->get();
     }
 
     public function mapIds($results)
